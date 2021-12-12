@@ -83,15 +83,15 @@ def __cancel_conversation(update: Update, _: CallbackContext) -> int:
 
 def __handle_command(update: Update, context: CallbackContext) -> None:
     logger.debug(f'Command "{update.message.text}" was received from {update.message.from_user.id}')
-    command_name = update.message.text.split("-")[0]
-    args = update.message.text.split("-")[1:]
+    command_name = update.message.text.split(" ")[0]
+    args = update.message.text.split(" ")[1:]
 
     user_access_level = _ba.get_user_access_level(update.message.from_user.id)
     command = get_command(command_name, user_access_level)
 
     if command.is_conversation:
         return
-    response = command.run(user_access_level, args) if command else _bl.get_response_by_intent(_bl.UNKNOWN_INTENT)
+    response = command.run(user_access_level, *args) if command else _bl.get_response_by_intent(_bl.UNKNOWN_INTENT)
     context.bot.send_message(chat_id=update.message.chat_id, text=response)
 
 
