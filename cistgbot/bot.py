@@ -89,9 +89,12 @@ def __handle_command(update: Update, context: CallbackContext) -> None:
     user_access_level = _ba.get_user_access_level(update.message.from_user.id)
     command = get_command(command_name, user_access_level)
 
-    if command.is_conversation:
-        return
-    response = command.run(user_access_level, *args) if command else _bl.get_response_by_intent(_bl.UNKNOWN_INTENT)
+    if command:
+        if command.is_conversation:
+            return
+        response = command.run(user_access_level, *args)
+    else:
+        response = _bl.get_response_by_intent(_bl.UNKNOWN_INTENT)
     context.bot.send_message(chat_id=update.message.chat_id, text=response)
 
 
